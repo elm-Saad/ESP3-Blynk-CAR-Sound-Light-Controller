@@ -114,3 +114,18 @@ ESP32
 | Speaker    | ✅                |
 | LEDs       | ✅                |
 | No SD card | ✅ Not needed     |
+
+
+# BLYNK + ESP32 (LIGHT CONTROL ONLY) 
+
+## 1️⃣ BLYNK APP – BUTTON LAYOUT (IMPORTANT)
+
+| Function        | Virtual Pin | Mode   |
+| --------------- | ----------- | ------ |
+| Headlights      | V0          | Switch |
+| Back lights     | V1          | Switch |
+| Indicator Left  | V2          | Switch |
+| Indicator Right | V3          | Switch |
+| Hazard          | V4          | Switch |
+| Cannon Flash    | V5          | Push   |
+
