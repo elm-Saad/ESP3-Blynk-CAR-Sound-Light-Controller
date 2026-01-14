@@ -4,13 +4,14 @@
 
 ### 🔦 LIGHT FEATURES (Digital outputs – EASY & RELIABLE)
 
-| Feature               | Type           | Behavior    | Notes                |
-| --------------------- | -------------- | ----------- | -------------------- |
-| `headLightsFlasherOn` | Toggle         | ON / OFF    | Front white LEDs     |
-| `indicatorLOn`        | Toggle + blink | 500ms blink | Sync with sound      |
-| `indicatorROn`        | Toggle + blink | 500ms blink | Sync with sound      |
-| `cannonFlash`         | Trigger        | Fast strobe | Like police / effect |
-| `backLightOn`         | Toggle         | ON / OFF    | Red LEDs             |
+| Feature               | Type           | Behavior    | Notes                    |
+| --------------------- | -------------- | ----------- | ------------------------ |
+| `headLightsFlasherOn` | Toggle         | ON / OFF    | Front white LEDs         |
+| `indicatorLOn`        | Toggle + blink | 500ms blink | Sync with sound          |
+| `indicatorROn`        | Toggle + blink | 500ms blink | Sync with sound          |
+| `cannonFlash`         | Trigger        | Fast strobe | Like police / effect     |
+| `hazardOn`            | Trigger        | ON / OFF    | L + R indicators together|
+| `backLightOn`         | Toggle         | ON / OFF    | Red LEDs                 |
 
 ✅ These are **GPIO-based**, very stable
 ✅ Can be driven directly or via resistors/transistors
