@@ -1,0 +1,273 @@
+<head>
+
+<script>
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+function convert(event)
+{
+    var reader = new FileReader();
+    var file = event.target.files[0];
+
+    reader.onload = function(){
+        var bytes = new Uint8Array(reader.result);
+
+        var snippet = document.getElementById("fileTypeSelect").value || "startS";
+        var text = "unsigned char PROGMEM " + snippet + "amples[" + bytes.length + "] = {\r\n";
+
+        for (var i = 0; i < bytes.length; i++)
+        {
+            if ((i & 15) === 0) text += "\r\n";
+            var hex = bytes[i].toString(16).toUpperCase();
+            if (hex.length < 2) hex = "0" + hex;
+            text += "0x" + hex + ", ";
+        }
+
+        text += "\r\n};\r\n";
+
+        var link = document.createElement("a");
+        link.download = file.name.split('.', 1)[0] + ".h";
+        link.href = URL.createObjectURL(
+            new Blob([text], {type: "text/plain"})
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        event.target.value = "";
+    };
+
+    reader.readAsArrayBuffer(file);   // 👈 THIS reads RAW WAV bytes
+}
+
+
+
+
+</script>
+
+</head>
+
+	<body>
+		<style>
+		  :root {
+			--bg: #0f172a;
+			--card: #111827;
+			--text: #e5e7eb;
+			--muted: #9ca3af;
+			--accent: #38bdf8;
+			--border: #1f2933;
+		  }
+	  
+		  * {
+			box-sizing: border-box;
+		  }
+	  
+		 
+
+		  body {
+			margin: 0;
+			font-family: "Segoe UI", Inter, system-ui, Arial, sans-serif;
+			background: linear-gradient(135deg, #020617, #0f172a);
+			color: var(--text);
+			min-height: 100vh;
+			padding: 40px 16px;
+		}
+
+	  
+		.container {
+			max-width: 900px;
+			margin: 0 auto;         
+			background: var(--card);
+			border-radius: 14px;
+			padding: 32px;
+			box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+			border: 1px solid var(--border);
+		}
+
+		.mainTitle {
+			text-align: center;
+			}
+
+		  h1 {
+			margin: 0 0 8px;
+			font-size: 2rem;
+			font-weight: 700;
+		  }
+	  
+		  h1 a {
+			color: var(--accent);
+			text-decoration: none;
+		  }
+	  
+		  h1 a:hover {
+			text-decoration: underline;
+		  }
+	  
+		  .subtitle {
+			color: var(--muted);
+			margin-bottom: 28px;
+			font-size: 0.95rem;
+		  }
+	  
+		  h4 {
+			margin: 28px 0 12px;
+			font-size: 1.05rem;
+			font-weight: 600;
+		  }
+	  
+		  .card {
+			background: rgba(255,255,255,0.02);
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			padding: 16px;
+			margin-bottom: 20px;
+		  }
+	  
+		  label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 10px;
+			cursor: pointer;
+		  }
+	  
+		  input[type="checkbox"] {
+			transform: scale(1.15);
+			accent-color: var(--accent);
+		  }
+	  
+		  input[type="text"],
+		  input[type="number"],
+		  select {
+			background: #020617;
+			border: 1px solid var(--border);
+			color: var(--text);
+			padding: 8px 10px;
+			border-radius: 6px;
+			font-size: 0.95rem;
+		  }
+	  
+		  input[type="file"] {
+			margin-top: 10px;
+			color: var(--muted);
+		  }
+	  
+		  select {
+			width: 100%;
+			max-width: 420px;
+		  }
+	  
+		  .row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+		  }
+	  
+		  .hint {
+			color: var(--muted);
+			font-size: 0.85rem;
+			margin-top: 6px;
+		  }
+	  
+		  .footer {
+			margin-top: 36px;
+			padding-top: 20px;
+			border-top: 1px solid var(--border);
+			font-size: 0.85rem;
+			color: var(--muted);
+		  }
+	  
+		  .footer a {
+			color: var(--accent);
+			text-decoration: none;
+		  }
+	  
+		  .footer a:hover {
+			text-decoration: underline;
+		  }
+		</style>
+	  
+		<div class="container">
+	  
+		  <h1 class="mainTitle">
+			Audio to header converter
+		  </h1>
+
+		  <h4>1. Export format options</h4>
+		  <div class="card">
+			<label>
+			  <input id="normalize" type="checkbox">
+			  Normalize audio (use if the WAV is too quiet)
+			</label>
+	  
+			<div class="row">
+			  <label>
+				<input id="resample" type="checkbox" checked>
+				Resample
+			  </label>
+			  <input id="samplerate" value="22050" type="number">
+			  <span class="hint">Hz (22050 Hz recommended)</span>
+			</div>
+		  </div>
+	  
+		  <h4>2. Noise reduction</h4>
+		  <div class="card">
+			<label>
+			  <input id="removeNoiseFloor" type="checkbox">
+			  Remove noise floor (recommended for silent sections)
+			</label>
+		  </div>
+	  
+		  <h4>3. Sound type</h4>
+		  <div class="card">
+			<select name="fileTypeSelect" id="fileTypeSelect">
+			  <option value="startS">Start (Anlasser)</option>
+			  <option selected value="s">Idle (Leerlauf)</option>
+			  <option value="revS">Rev (Hohe Drehzahl)</option>
+			  <option value="knockS">Knock (Klopfen)</option>
+			  <option value="turboS">Turbo</option>
+			  <option value="wastegateS">Wastegate (Blowoff)</option>
+			  <option value="chargerS">Charger (Lader)</option>
+			  <option value="fanS">Fan (Lüfter)</option>
+			  <option value="shiftingS">Shifting (Schaltung)</option>
+			  <option value="brakeS">Brake (Bremse lösen)</option>
+			  <option value="parkingBrakeS">Parking Brake</option>
+			  <option value="jakeBrakeS">Jake Brake</option>
+			  <option value="indicatorS">Indicator (Blinker)</option>
+			  <option value="hornS">Horn (Hupe)</option>
+			  <option value="sirenS">Siren</option>
+			  <option value="couplingS">Coupling</option>
+			  <option value="uncouplingS">Uncoupling</option>
+			  <option value="sound1S">Sound 1</option>
+			  <option value="hydraulicPumpS">Hydraulic Pump</option>
+			  <option value="hydraulicFlowS">Hydraulic Flow</option>
+			  <option value="trackRattleS">Track Rattle</option>
+			  <option value="bucketRattleS">Bucket Rattle</option>
+			  <option value="tireSquealS">Tire Squeal</option>
+			  <option value="outOfFuelS">Out of Fuel</option>
+			</select>
+		  </div>
+	  
+		  <h4>4. Select WAV file</h4>
+		  <div class="card">
+			<input type="file" onchange="convert(event)">
+			<div class="hint">
+			  Unsigned 8-bit PCM · Mono · 22050 Hz · Prepared with Audacity
+			</div>
+		  </div>
+	  
+		  <h4>5. Output</h4>
+		  <div class="card">
+			The <code>.h</code> file will be generated and downloaded automatically.<br><br>
+		  </div>
+	  
+		  <div class="footer">
+			<strong>Special thanks:</strong><br>
+			• <a href="https://youtube.com/bitlunislab" target="_blank">bitluni</a> – original audio converter<br>
+			• Modified by <a href="https://github.com/elm-Saad" target="_blank">Saad</a>
+		  </div>
+		  
+	  
+		</div>
+	</body>
+	  
+</html>

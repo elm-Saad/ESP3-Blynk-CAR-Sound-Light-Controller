@@ -1,0 +1,17 @@
+✅ Correct workflow
+
+1. Prepare WAV file
+  -> 8-bit PCM
+  -> 22050 Hz
+
+2. Open the page
+
+3. In the select bar → choose the name you want (ex: indicator)
+
+3. Upload the WAV file
+
+5. You get a .h file like:
+
+unsigned char PROGMEM indicatorSamples[40923] = {
+  0x52, 0x49, 0x46, 0x46, ...
+};
